@@ -59,6 +59,8 @@ public class FileCreate extends FileChange implements Runnable {
 			download.downloadFile(Integer.toString(this.getFileId()),this.getFileName());
 			File src = new File(MyDropboxSwing.tmpFolder+"/"+this.getFileName());
 			File dst = new File(MyDropboxSwing.urls+"/"+this.getFileName());
+			String log = "File "+this.getFileName()+" download from server \n";
+			MyDropboxSwing.jTextArea1.append(log);
 			try {
 				if(dst.exists())
 					dst.delete();
@@ -74,6 +76,8 @@ public class FileCreate extends FileChange implements Runnable {
 			try{
 				Path filePath = Paths.get(path);
 				Files.createDirectory(filePath);
+				String log = "Directory "+this.getFileName()+" create \n";
+				MyDropboxSwing.jTextArea1.append(log);
 			}catch(InvalidPathException ex)
 			{
 				System.out.println("Duong dan khong ton tai");

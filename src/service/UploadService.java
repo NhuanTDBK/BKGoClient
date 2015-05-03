@@ -7,6 +7,9 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import model.XmlFactory;
 import mydropbox.MyDropboxSwing;
 
@@ -35,25 +38,31 @@ public class UploadService {
 
 	public static int uploadFile(String fileName, String tid)
 	{
-		String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/files/file";
-		//String url = "http://localhost:8112/user/1/files/file";
+		//String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/files/file";
+		String url = "http://localhost:8112/user/1/files/file";
 		File file = new File(MyDropboxSwing.urls+"/"+fileName);
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost(url);
 		int fileId = 0;
+		int fileChangeId=0;
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 		try{
 			builder.addBinaryBody("file",file,ContentType.create(Files.probeContentType(Paths.get(file.getPath()))),fileName);
 			HttpEntity entity = builder.build();
 			httpPost.setEntity(entity);
 			httpPost.addHeader("X-TID",tid);
-			System.out.println(httpPost.getEntity().toString());
+	
 			CloseableHttpResponse response = client.execute(httpPost);
 			HttpEntity res = response.getEntity();
-			List<String> lst = ServerUtil.getToken(EntityUtils.toString(res));
-			fileId = Integer.parseInt(lst.get(0));
-			int fileChangeId = Integer.parseInt(lst.get(1));
-
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = factory.newDocumentBuilder();
+			Document doc = docBuilder.parse(res.getContent());
+			DomRepresentation dom = new DomRepresentation();
+			dom.setDocument(doc);
+			
+			fileId = Integer.parseInt(dom.getText("/File/FileId"));
+			fileChangeId = Integer.parseInt(dom.getText("/File/FileChangeId"));
+			
 			MyDropboxSwing.cursor.setTid(Integer.parseInt(tid));
 			MyDropboxSwing.cursor.setIndex(fileChangeId);
 
@@ -136,12 +145,6 @@ public class UploadService {
 	public static void main(String [] args)
 	{
 		UploadService upload = new UploadService();
-		//upload.uploadFile("1926896_1482959935303343_7941230303166801896_n.jpg","2");
-		try {
-			upload.uploadDirectory("as", "2");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		upload.uploadFile("freemem","2");
 	}
 }

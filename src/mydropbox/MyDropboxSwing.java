@@ -39,8 +39,11 @@ import org.restlet.ext.xml.DomRepresentation;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import actionListener.CommitAction;
+import actionListener.SyncAction;
 import service.AutoSyncService;
 import service.DownloadService;
+import service.UploadService;
 import controller.AppConfig;
 import controller.FileWatcher;
 import controller.LoginForm;
@@ -143,7 +146,7 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 
 		sync.setEnabled(false);
 		sync.setText("Sync");
-
+		sync.addActionListener(new SyncAction());
 		password.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				passwordActionPerformed(evt);
@@ -155,12 +158,8 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 		jLabel2.setText("Password");
 
 		reload.setEnabled(false);
-		reload.setText("Reload");
-		reload.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				reloadActionPerformed(evt);
-			}
-		});
+		reload.setText("Upload");
+		reload.addActionListener(new CommitAction());
 
 		jTextArea1.setEnabled(false);
 		jTextArea1.setColumns(20);
@@ -294,7 +293,7 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 		}
 		
 		loadXMLDoc();
-		timer.start();
+		//timer.start();
 	}
 
 	private void log_outActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_log_outActionPerformed
@@ -320,16 +319,16 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 		// TODO add your handling code here:
 	}// GEN-LAST:event_passwordActionPerformed
 
-	private void reloadActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_reloadActionPerformed
+	private void reloadActionPerformed(java.awt.event.ActionEvent evt) {}// GEN-FIRST:event_reloadActionPerformed
 		// TODO add your handling code here:
-		File file = new File(urls);
-
-		root = new DefaultMutableTreeNode("Root");
-		DefaultTreeModel defaultTreeModel = new DefaultTreeModel(root);
-		jTree1.setModel(defaultTreeModel);
-
-		addNode(file, root);
-	}// GEN-LAST:event_reloadActionPerformed
+//		File file = new File(urls);
+//
+//		root = new DefaultMutableTreeNode("Root");
+//		DefaultTreeModel defaultTreeModel = new DefaultTreeModel(root);
+//		jTree1.setModel(defaultTreeModel);
+//
+//		addNode(file, root);
+	//}// GEN-LAST:event_reloadActionPerformed
 
 	/**
 	 * @param args
@@ -454,9 +453,14 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 			try {
 				Document doc = download.getServer();
 				xmlFactory.saveFileXml(doc, Constants.INDEXXML);
+				dom = new DomRepresentation();
+				dom.setDocument(doc);
 			} catch (IllegalStateException e1) {
-				// TODO Auto-generated catch block
+				
 				e1.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		else 
@@ -472,6 +476,7 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 
 			} catch (ParserConfigurationException | SAXException e) {
 				// TODO Auto-generated catch block
+				jTextArea1.append("Fail to load file index \n");
 				e.printStackTrace();
 			}
 			catch(IOException e)
@@ -484,11 +489,13 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 				} catch (IllegalStateException | IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					jTextArea1.append("Fail to load file index \n");
 				}
 			}
 			//Kiem tra thu muc moi, them cac file moi, file bi xoa vao list commit
-			HashSet<FileStorage> hSet = new HashSet<FileStorage>();
-			WriteXml.listFilesToSet(hSet,new File("/home/nhuan/Dropbox"));
+//			HashSet<FileStorage> hSet = new HashSet<FileStorage>();
+//			WriteXml.listFilesToSet(hSet,new File("/home/nhuan/Dropbox"));
+			jTextArea1.append("Loading file index \n");
 		}
 	}
 	public void loadFileConfig()
@@ -502,5 +509,6 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 		this.tmpFolder = prop.getProperty("tmp");
 		this.index = prop.getProperty("index");
 		cursor= new FileCursor(this.tid,this.index);
+		jTextArea1.append("Loading file config \n");
 	}
 }

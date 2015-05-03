@@ -23,7 +23,14 @@ public class FileCursor implements Serializable, Comparable<FileCursor> {
 		return tid;
 	}
 	public void setTid(int tid) {
-		this.tid = tid;
+		try{	
+			if(this.tid==0||this.tid<tid)
+				this.tid = tid;
+	
+		}catch(Exception ex)
+		{
+			this.tid = tid;
+		}
 	}
 	public int getIndex() {
 		return index;
@@ -32,6 +39,7 @@ public class FileCursor implements Serializable, Comparable<FileCursor> {
 		try{	
 			if(this.index==0||this.index<index)
 				this.index = index;
+	
 		}catch(Exception ex)
 		{
 			this.index = index;
