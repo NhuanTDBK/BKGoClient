@@ -53,18 +53,21 @@ public class FileCreate extends FileChange implements Runnable {
 	@Override
 	public void doUpdate() {
 		// TODO Auto-generated method stub
+		String log;
 		if(this.getIsFile()==Constants.IS_FILE)
 		{
 			DownloadService download = new DownloadService();
 			download.downloadFile(Integer.toString(this.getFileId()),this.getFileName());
 			File src = new File(MyDropboxSwing.tmpFolder+"/"+this.getFileName());
 			File dst = new File(MyDropboxSwing.urls+"/"+this.getFileName());
-			String log = "File "+this.getFileName()+" download from server \n";
-			MyDropboxSwing.jTextArea1.append(log);
+			log = "File "+ this.getFileName() + " download from server";
 			try {
 				if(dst.exists())
 					dst.delete();
 				FileUtils.moveFile(src, dst);
+				XmlFactory xml = new XmlFactory(MyDropboxSwing.dom);
+				xml.insertFileNode(this);
+				MyDropboxSwing.jTextArea1.append(log+"\n");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -76,8 +79,8 @@ public class FileCreate extends FileChange implements Runnable {
 			try{
 				Path filePath = Paths.get(path);
 				Files.createDirectory(filePath);
-				String log = "Directory "+this.getFileName()+" create \n";
-				MyDropboxSwing.jTextArea1.append(log);
+				log = "Directory "+this.getFileName()+" create";
+				MyDropboxSwing.jTextArea1.append(log+"\n");
 			}catch(InvalidPathException ex)
 			{
 				System.out.println("Duong dan khong ton tai");
@@ -90,6 +93,7 @@ public class FileCreate extends FileChange implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		
 	}
 	//	public void doUpdate(boolean temp)
 	//	{

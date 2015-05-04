@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.xml.transform.Transformer;
@@ -209,17 +210,69 @@ public class XmlFactory {
 			fileChange.setFileChangeId(Integer.parseInt(fileChangeIdStr));
 			lst.add(fileChange);
 		}
-//		List<FileChange>lstResult = new ArrayList<FileChange>();
-//		for(int i = 0;i<lst.size();i++)
-//		{
-//			for(int j = i;j<lst.size();j++)
-//			{
-//				
-//			}
-//		}
 		return lst;
 	}
+	public Object[][]parseXMLToFile(Document doc)
+	{
+		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		NodeList nodes = doc.getElementsByTagName("File");
+		List<FileStorage> lst= new ArrayList<FileStorage>();
+		int length = nodes.getLength();
+		Object[][] objects = new Object[length][3];
+		for(int i = 0;i<length;i++)
+		{
+			Node node = nodes.item(i);
+			FileStorage fileStorage = new FileStorage();
+			NamedNodeMap attrs=node.getAttributes();
+			String idStr = attrs.getNamedItem("id").getNodeValue();
+			int fileId = Integer.parseInt(idStr);
 
+			String nameStr = attrs.getNamedItem("name").getNodeValue();
+
+			String timestampStr = attrs.getNamedItem("timestamp").getNodeValue();
+			Date timestamp=null;
+			try {
+				timestamp = format.parse(timestampStr);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			fileStorage.setFileId(fileId);
+			fileStorage.setCreateDate(timestamp);
+			fileStorage.setFileName(nameStr);
+			objects[i][0] = nameStr;
+			objects[i][1] = timestampStr;
+			objects[i][2] = fileId;
+			lst.add(fileStorage);
+		}
+		return objects;
+	}
+	public Object[][] parseXMLToVersion(Document doc)
+	{
+		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		NodeList nodes = doc.getElementsByTagName("File");
+		int length = nodes.getLength();
+		Object[][] objects = new Object[length][4];
+		for(int i = 0;i<length;i++)
+		{
+			Node node = nodes.item(i);
+			NamedNodeMap attrs=node.getAttributes();
+			String idStr = attrs.getNamedItem("id").getNodeValue();
+			int fileId = Integer.parseInt(idStr);
+
+			String nameStr = attrs.getNamedItem("name").getNodeValue();
+
+			String timestampStr = attrs.getNamedItem("timestamp").getNodeValue();
+
+			String versionStr = attrs.getNamedItem("version").getNodeValue();
+
+			objects[i][0] = nameStr;
+			objects[i][1] = timestampStr;
+			objects[i][3] = fileId;
+			objects[i][2] = versionStr;
+		}
+		return objects;
+	}
 	public static void main(String[] args) {
 		XmlFactory fac = new XmlFactory();
 		fac.deleteNodeByFileId(29);

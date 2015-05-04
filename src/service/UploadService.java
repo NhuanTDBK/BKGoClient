@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,24 +23,24 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.restlet.data.Form;
 import org.restlet.ext.xml.DomRepresentation;
-import org.restlet.representation.Representation;
-import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.ClientResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import controller.ServerUtil;
-
 public class UploadService {
-
+	
+	private static CloseableHttpClient getHttpClient()
+	{
+		return HttpConnectionPool.getClient();
+	}
 	public static int uploadFile(String fileName, String tid)
 	{
-		//String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/files/file";
-		String url = "http://localhost:8112/user/1/files/file";
+		String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/files/file";
+		//String url = "http://localhost:8112/user/1/files/file";
 		File file = new File(MyDropboxSwing.urls+"/"+fileName);
-		CloseableHttpClient client = HttpClients.createDefault();
+		//CloseableHttpClient client = HttpClients.createDefault();
+		CloseableHttpClient client = getHttpClient();
 		HttpPost httpPost = new HttpPost(url);
 		int fileId = 0;
 		int fileChangeId=0;
@@ -66,7 +65,7 @@ public class UploadService {
 			MyDropboxSwing.cursor.setTid(Integer.parseInt(tid));
 			MyDropboxSwing.cursor.setIndex(fileChangeId);
 
-			client.close();
+			//client.close();
 		}
 		catch(Exception ex)
 		{
@@ -145,6 +144,12 @@ public class UploadService {
 	public static void main(String [] args)
 	{
 		UploadService upload = new UploadService();
-		upload.uploadFile("freemem","2");
+		//upload.uploadFile("1926896_1482959935303343_7941230303166801896_n.jpg","2");
+		try {
+			upload.uploadDirectory("as", "2");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

@@ -42,8 +42,11 @@ public class FileDelete extends FileCreate implements Runnable{
 		// TODO Auto-generated method stub
 		String path = MyDropboxSwing.urls + "/" + this.getFileName();
 		Path filePath = Paths.get(path);
+		//String userDirectory = System.getProperty("user.home")+"/.local/share/Trash/files/"+this.getFileName();
+		Path trash = Paths.get(MyDropboxSwing.trashFolder+"/"+this.getFileName());
 		try {
-			Files.deleteIfExists(filePath);
+			Files.move(filePath, trash);
+			//Files.deleteIfExists(filePath);
 		} catch (NoSuchFileException ex) {
 			System.out.println("Delete khong thanh cong do khong co file"
 					+ ex.getMessage());
@@ -54,7 +57,6 @@ public class FileDelete extends FileCreate implements Runnable{
 			System.out.println("Delete khong thanh cong do quyen truy cap");
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override

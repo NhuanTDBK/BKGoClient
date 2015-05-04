@@ -37,8 +37,9 @@ public class SyncAction implements ActionListener {
 		//Update xong, khoi dong lai watcher
 		TransactionService transactionHTTP = new TransactionService();
 		String check = "Kiem tra version \n";
-		MyDropboxSwing.jTextArea1.append(check);
+//		MyDropboxSwing.jTextArea1.append(check);
 		System.out.println(check);
+		MyDropboxSwing.jProgressBar1.setIndeterminate(true);
 		DomRepresentation dom = transactionHTTP.getLatestUpdate(MyDropboxSwing.cursor);
 		if(dom!=null)
 		{
@@ -77,6 +78,8 @@ public class SyncAction implements ActionListener {
 				e1.printStackTrace();
 			}
 		}
+		MyDropboxSwing.jProgressBar1.setIndeterminate(false);
+		MyDropboxSwing.jTextArea1.append("Sync completed \n");
 		System.out.println("Last version!!!!");
 	}
 }

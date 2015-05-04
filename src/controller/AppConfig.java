@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 import model.Constants;
 import mydropbox.MyDropboxSwing;
 
@@ -20,22 +23,17 @@ public class AppConfig {
 		FileInputStream stream=null;
 		try {
 			stream = new FileInputStream(Constants.FILEPROPNAME);
+			prop.load(stream);
+			stream.close();
+
 		} catch (FileNotFoundException e2) {
 			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		if(stream!=null) 
-		{
-			try {
-				prop.load(stream);
-				stream.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		else
-		{
+			//e2.printStackTrace();
+			System.out.println("Create new config file");
+			String ipServer = JOptionPane.showInputDialog("Type IP Server");
+			if(ipServer.isEmpty())
+				ipServer = "localhost";
+			
 			File properties = new File(Constants.FILEPROPNAME);
 			try {
 				properties.createNewFile();
@@ -53,17 +51,21 @@ public class AppConfig {
 			prop.setProperty("tid", "0");
 			prop.setProperty("index", "0");
 			prop.setProperty("protocol", "http");
-			prop.setProperty("address", "localhost");
+			prop.setProperty("address",ipServer);
 			prop.setProperty("port", "8112");
 			String userDirectory = System.getProperty("user.home")+"/Dropbox";
 			String tmpDirectory = FileUtils.getTempDirectory()+"/Dropbox";
+			String trashDirectory = System.getProperty("user.home")+"/Trash";
 			File file = new File(userDirectory);
 			File tmp = new File(tmpDirectory);
+			File trash = new File(trashDirectory);
 			try{
 				file.mkdir();
 				tmp.mkdir();
+				trash.mkdir();
 				prop.setProperty("urls", userDirectory);
 				prop.setProperty("tmpFolder", tmpDirectory);
+				prop.setProperty("trash", trashDirectory);
 			}catch(SecurityException ex)
 			{
 				System.out.print("Khong co quyen tao folder");
@@ -75,9 +77,12 @@ public class AppConfig {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
+
 		return prop;
 	}
 	public void write(String key,String value)

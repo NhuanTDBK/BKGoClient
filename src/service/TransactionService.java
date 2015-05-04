@@ -16,6 +16,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class TransactionService {
+	public static final String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/transaction";
+	public static ClientResource clientResource = new ClientResource(url);
+	public static ClientResource getClientResource()
+	{
+		return clientResource;
+	}
 	public static int getTransaction()
 	{
 		int tid = 0;
@@ -78,13 +84,15 @@ public class TransactionService {
 			Document doc;
 			doc = dom.getDocument();
 			String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/transaction";
+			//String url = "http://localhost:8112/user/1/transaction";
 			StringRepresentation request = new StringRepresentation(cursor.toString());
-			ClientResource client = new ClientResource(url);
+			ClientResource client = getClientResource();
 			response =client.post(request);	
+//			client.release();
 			if(response.getMediaType().equals(MediaType.TEXT_XML)||response.getMediaType().equals(MediaType.APPLICATION_ALL_XML))
 				dom = new DomRepresentation(response);
 			else return null;
-
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.println("Loi server "+e.getMessage());
@@ -95,6 +103,6 @@ public class TransactionService {
 //	public static void main(String [] args)
 //	{
 //		TransactionService http = new TransactionService();
-//		http.getUpdate(new FileCursor("0", "0"));
+//		System.out.println(http.getLatestUpdate(new FileCursor("0", "0"))==null?"null":"have");
 //	}
 }

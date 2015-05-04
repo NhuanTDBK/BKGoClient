@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.resource.ClientResource;
 import org.w3c.dom.Document;
@@ -75,7 +76,9 @@ public class DeleteService {
 		HttpDelete httpDelete = new HttpDelete(URL);
 		httpDelete.addHeader("X-TID", tid);
 		try{
-			client.execute(httpDelete);
+			CloseableHttpResponse response = client.execute(httpDelete);
+			String resStr = EntityUtils.toString(response.getEntity());
+			MyDropboxSwing.cursor.setIndex(Integer.parseInt(resStr));
 			System.out.println("Delete thanh cong");
 		}
 		catch(Exception ex)

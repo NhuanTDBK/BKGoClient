@@ -39,15 +39,15 @@ import org.restlet.ext.xml.DomRepresentation;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import actionListener.CommitAction;
-import actionListener.SyncAction;
+import actionListener.DeleteAction;
 import service.AutoSyncService;
 import service.DownloadService;
-import service.UploadService;
 import controller.AppConfig;
 import controller.FileWatcher;
 import controller.LoginForm;
 import controller.WriteXml;
+import frame.ShowFileDelete;
+import frame.ShowFileVersion;
 
 /**
  *
@@ -74,6 +74,7 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 	public static String address;
 	public static String port;
 	public static String tmpFolder;
+	public static String trashFolder;
 	public static Thread timer;
 	public static FileCursor cursor;
 	public static String index;
@@ -98,7 +99,7 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 	 */
 	@SuppressWarnings("unchecked")
 	// <editor-fold defaultstate="collapsed"
-	// <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+	// <editor-fold defaultstate="collapsed" desc="Generated Code">                          
 	private void initComponents() {
 
 		sign_in = new javax.swing.JButton();
@@ -115,7 +116,8 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 		jScrollPane2 = new javax.swing.JScrollPane();
 		jTextArea1 = new javax.swing.JTextArea();
 		jLabel3 = new javax.swing.JLabel();
-		updatePanel = new javax.swing.JScrollPane();
+		jButton1 = new javax.swing.JButton();
+		jButton2 = new javax.swing.JButton();
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		setTitle("My Dropbox");
@@ -127,7 +129,8 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 			}
 		});
 
-		log_out.setText("Logout");
+		log_out.setText("Watcher");
+		log_out.setToolTipText("");
 		log_out.setEnabled(false);
 		log_out.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -146,7 +149,7 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 
 		sync.setEnabled(false);
 		sync.setText("Sync");
-		sync.addActionListener(new SyncAction());
+
 		password.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				passwordActionPerformed(evt);
@@ -158,8 +161,12 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 		jLabel2.setText("Password");
 
 		reload.setEnabled(false);
-		reload.setText("Upload");
-		reload.addActionListener(new CommitAction());
+		reload.setText("Reload");
+		reload.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				reloadActionPerformed(evt);
+			}
+		});
 
 		jTextArea1.setEnabled(false);
 		jTextArea1.setColumns(20);
@@ -168,11 +175,25 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 
 		jLabel3.setText("History");
 
+		jButton1.setText("Show File Delete");
+		jButton1.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jButton1ActionPerformed(evt);
+			}
+		});
+
+		jButton2.setText("Show File Revision");
+		jButton2.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jButton2ActionPerformed(evt);
+			}
+		});
+
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
 		layout.setHorizontalGroup(
 				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-				.addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+				.addGroup(layout.createSequentialGroup()
 						.addContainerGap()
 						.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addGroup(layout.createSequentialGroup()
@@ -188,21 +209,25 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 																.addGap(18, 18, 18)
 																.addComponent(sign_in, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
 																.addGap(18, 18, 18)
-																.addComponent(log_out, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-																.addGap(46, 46, 46)
+																.addComponent(log_out)
+																.addGap(44, 44, 44)
 																.addComponent(reload, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
 																.addGap(18, 18, 18)
-																.addComponent(sync, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-																.addComponent(jLabel3))
+																.addComponent(sync, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))
 																.addGap(39, 39, 39)
 																.addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-																.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-																.addComponent(jScrollPane2)
-																.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-																		.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-																				.addComponent(updatePanel, javax.swing.GroupLayout.Alignment.LEADING)
-																				.addComponent(jScrollPane1))
-																				.addContainerGap())))
+																.addGap(62, 89, Short.MAX_VALUE))
+																.addGroup(layout.createSequentialGroup()
+																		.addComponent(jLabel3)
+																		.addGap(0, 0, Short.MAX_VALUE))
+																		.addComponent(jScrollPane2)
+																		.addComponent(jScrollPane1)))
+																		.addGroup(layout.createSequentialGroup()
+																				.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+																				.addComponent(jButton1)
+																				.addGap(18, 18, 18)
+																				.addComponent(jButton2)
+																				.addGap(142, 142, 142))
 				);
 		layout.setVerticalGroup(
 				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -223,21 +248,33 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 														.addGroup(layout.createSequentialGroup()
 																.addGap(34, 34, 34)
 																.addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-																.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 																.addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-																.addGap(18, 18, 18)
-																.addComponent(updatePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-																.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+																.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 																.addComponent(jLabel3)
 																.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																.addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-																.addGap(18, 18, 18))
+																.addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+																.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+																.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+																		.addComponent(jButton1)
+																		.addComponent(jButton2))
+																		.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 				);
 
-		updatePanel.getAccessibleContext().setAccessibleName("");
+		setBounds(0, 0, 1046, 534);
+	}// </editor-fold>                        
 
-		setBounds(0, 0, 1018, 514);
-	}// </editor-fold>//GEN-END:initComponents
+	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+		// TODO add your handling code here:
+		ShowFileDelete d = new ShowFileDelete();
+		d.setVisible(true);
+	}                                        
+
+	private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+		// TODO add your handling code here:
+		ShowFileVersion s = new ShowFileVersion();
+		s.setVisible(true);
+	}                                        
 
 	private void sign_inActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_sign_inActionPerformed
 
@@ -291,44 +328,30 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 			Logger.getLogger(MyDropboxSwing.class.getName()).log(Level.SEVERE,
 					null, ex);
 		}
-		
+
 		loadXMLDoc();
-		//timer.start();
+
 	}
 
 	private void log_outActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_log_outActionPerformed
 		// TODO add your handling code here:
-		sign_in.setEnabled(true);
-		log_out.setEnabled(false);
-		jScrollPane1.setEnabled(false);
-		jTree1.setEnabled(false);
-		sync.setEnabled(false);
-		jProgressBar1.setEnabled(false);
-		username.setEnabled(true);
-		password.setEnabled(true);
-		jTextArea1.setText("");
-		jTextArea1.setEnabled(false);
-		reload.setEnabled(false);
-		root = new DefaultMutableTreeNode("Root");
-		root.removeAllChildren();
-		DefaultTreeModel defaultTreeModel = new DefaultTreeModel(root);
-		jTree1.setModel(defaultTreeModel);
+		timer.start();  
 	}// GEN-LAST:event_log_outActionPerformed
 
 	private void passwordActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_passwordActionPerformed
 		// TODO add your handling code here:
 	}// GEN-LAST:event_passwordActionPerformed
 
-	private void reloadActionPerformed(java.awt.event.ActionEvent evt) {}// GEN-FIRST:event_reloadActionPerformed
+	private void reloadActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_reloadActionPerformed
 		// TODO add your handling code here:
-//		File file = new File(urls);
-//
-//		root = new DefaultMutableTreeNode("Root");
-//		DefaultTreeModel defaultTreeModel = new DefaultTreeModel(root);
-//		jTree1.setModel(defaultTreeModel);
-//
-//		addNode(file, root);
-	//}// GEN-LAST:event_reloadActionPerformed
+		File file = new File(urls);
+
+		root = new DefaultMutableTreeNode("Root");
+		DefaultTreeModel defaultTreeModel = new DefaultTreeModel(root);
+		jTree1.setModel(defaultTreeModel);
+
+		addNode(file, root);
+	}// GEN-LAST:event_reloadActionPerformed
 
 	/**
 	 * @param args
@@ -375,11 +398,13 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 		});
 	}
 
-	// Variables declaration - do not modify//GEN-BEGIN:variables
+	// Variables declaration - do not modify                     
+	private javax.swing.JButton jButton1;
+	private javax.swing.JButton jButton2;
 	private javax.swing.JLabel jLabel1;
 	private javax.swing.JLabel jLabel2;
 	private javax.swing.JLabel jLabel3;
-	private javax.swing.JProgressBar jProgressBar1;
+	public static  javax.swing.JProgressBar jProgressBar1;
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JScrollPane jScrollPane2;
 	public static javax.swing.JTextArea jTextArea1;
@@ -389,9 +414,8 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 	private javax.swing.JButton reload;
 	private javax.swing.JButton sign_in;
 	private javax.swing.JButton sync;
-	private javax.swing.JScrollPane updatePanel;
 	private javax.swing.JTextField username;
-	// End of variables declaration//GEN-END:variables
+	// End of variables declaration                   
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
@@ -456,11 +480,10 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 				dom = new DomRepresentation();
 				dom.setDocument(doc);
 			} catch (IllegalStateException e1) {
-				
-				e1.printStackTrace();
-			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e1.printStackTrace();
+			} catch (IOException ex) {
+				Logger.getLogger(MyDropboxSwing.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 		else 
@@ -476,7 +499,6 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 
 			} catch (ParserConfigurationException | SAXException e) {
 				// TODO Auto-generated catch block
-				jTextArea1.append("Fail to load file index \n");
 				e.printStackTrace();
 			}
 			catch(IOException e)
@@ -489,13 +511,9 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 				} catch (IllegalStateException | IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-					jTextArea1.append("Fail to load file index \n");
 				}
 			}
 			//Kiem tra thu muc moi, them cac file moi, file bi xoa vao list commit
-//			HashSet<FileStorage> hSet = new HashSet<FileStorage>();
-//			WriteXml.listFilesToSet(hSet,new File("/home/nhuan/Dropbox"));
-			jTextArea1.append("Loading file index \n");
 		}
 	}
 	public void loadFileConfig()
@@ -507,8 +525,8 @@ public class MyDropboxSwing extends javax.swing.JFrame implements WindowListener
 		this.port = prop.getProperty("port");
 		this.urls = prop.getProperty("urls");
 		this.tmpFolder = prop.getProperty("tmp");
+		this.trashFolder = prop.getProperty("trash");
 		this.index = prop.getProperty("index");
 		cursor= new FileCursor(this.tid,this.index);
-		jTextArea1.append("Loading file config \n");
 	}
 }
