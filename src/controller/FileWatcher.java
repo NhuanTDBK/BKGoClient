@@ -6,13 +6,13 @@
 package controller;
 
 
-import static mydropbox.MyDropboxSwing.diffList;
 import static mydropbox.MyDropboxSwing.jTextArea1;
-import static mydropbox.MyDropboxSwing.list;
 import static mydropbox.MyDropboxSwing.lstCommit;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+
 import model.Constants;
 import model.FileCreate;
 import model.FileDelete;
@@ -25,7 +25,6 @@ import org.apache.commons.io.monitor.FileAlterationObserver;
 public class FileWatcher implements FileAlterationListener {
 
 	SimpleDateFormat format = new  SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-	public static String log = "";
 	@Override
 	public void onDirectoryChange(File arg0) {
 		// TODO Auto-generated method stub
@@ -37,7 +36,7 @@ public class FileWatcher implements FileAlterationListener {
 		// TODO Auto-generated method stub
 		if(!Files.isSymbolicLink(arg0.toPath())){
 			String directoryName = ServerUtil.convertPath(arg0.getAbsolutePath(), MyDropboxSwing.urls);
-			log ="Directory is created "+ arg0.getName()+"\n";
+			String log ="Directory is created "+ arg0.getName()+"\n";
 			System.out.println(log);
 			jTextArea1.append(log);
 			FileCreate fileCreate = new FileCreate(directoryName, Constants.IS_FOLDER);
@@ -49,7 +48,7 @@ public class FileWatcher implements FileAlterationListener {
 	public void onDirectoryDelete(File arg0) {
 		// TODO Auto-generated method stub
 		String directoryName = ServerUtil.convertPath(arg0.getAbsolutePath(), MyDropboxSwing.urls);
-		log ="Directory is delete "+ arg0.getName()+"\n";
+		String log ="Directory is delete "+ arg0.getName()+"\n";
 		System.out.println(log);
 		jTextArea1.append(log);
 		FileDelete fileDelete = new FileDelete(directoryName, Constants.IS_FOLDER);
@@ -60,19 +59,19 @@ public class FileWatcher implements FileAlterationListener {
 	public void onFileChange(File arg0) {
 		
 		//System.out.println("File is changed " + arg0.getAbsolutePath() + " and size: "+format.format(arg0.lastModified()));
-		log = "File is changed " + arg0.getAbsolutePath() + " and size: "+format.format(arg0.lastModified()) +"\n";
+		String log = "File is changed " + arg0.getAbsolutePath() + " and size: "+format.format(arg0.lastModified()) +"\n";
 		String fileName = ServerUtil.convertPath(arg0.getAbsolutePath(), MyDropboxSwing.urls);
 		System.out.println(log);
 		jTextArea1.append(log);
-		list.clear();
-		list.addAll(diffList);
+//		list.clear();
+//		list.addAll(diffList);
 		FileUpdate fileCreate = new FileUpdate(fileName,Constants.IS_FILE);
 		lstCommit.add(fileCreate);
 	}
 
 	@Override
 	public void onFileCreate(File arg0) {
-		log = "File is created " + arg0.getAbsolutePath() + " and size: "+format.format(arg0.lastModified()) +"\n";
+		String log = "File is created " + arg0.getAbsolutePath() + " and size: "+format.format(arg0.lastModified()) +"\n";
 		System.out.println(log);
 		jTextArea1.append(log);
 		if(!Files.isSymbolicLink(arg0.toPath()))
@@ -85,7 +84,7 @@ public class FileWatcher implements FileAlterationListener {
 
 	@Override
 	public void onFileDelete(File arg0) {
-		if(!Files.isSymbolicLink(arg0.toPath()))
+            if(!Files.isSymbolicLink(arg0.toPath()))
 		{
 			String fileName = ServerUtil.convertPath(arg0.getAbsolutePath(), MyDropboxSwing.urls);
 			FileDelete fileDelete = new FileDelete(fileName, Constants.IS_FILE);
@@ -95,26 +94,12 @@ public class FileWatcher implements FileAlterationListener {
 
 	@Override
 	public void onStart(FileAlterationObserver arg0) {
-		// TODO Auto-generated method stub
-		//System.out.println("Watcher is started");type name = new type(arguments);
-		//		try {
-		//			MyDropboxSwing.watcher.start();
-		//		} catch (Exception e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
+
 	}
 
 	@Override
 	public void onStop(FileAlterationObserver arg0) {
-		// TODO Auto-generated method stub
-		//System.out.println("Watcher is stopped");
-		//		try {
-		//			MyDropboxSwing.watcher.stop();
-		//		} catch (Exception e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
+
 	}
 //
 //	public void compareArr(){

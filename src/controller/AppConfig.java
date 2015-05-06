@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import model.Constants;

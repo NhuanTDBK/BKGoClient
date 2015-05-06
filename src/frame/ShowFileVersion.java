@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import model.CustomTableModel;
@@ -52,7 +54,8 @@ public class ShowFileVersion extends javax.swing.JFrame {
         }
         CustomTableModel model = new CustomTableModel(lst,columnName);
         table = new JTable(model);
-        this.add(table, BorderLayout.CENTER);
+        JScrollPane pane = new JScrollPane(table);
+        this.add(pane, BorderLayout.CENTER);
         //this.add(pane);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }

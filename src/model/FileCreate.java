@@ -31,16 +31,15 @@ public class FileCreate extends FileChange implements Runnable {
 		int id=0;
 		try {
 			if(this.getIsFile()==Constants.IS_FILE)
-				id = UploadService.uploadFile(this.getFileName(),this.getTid());
+				id = UploadService.uploadFile(this.getFileName(),Integer.toString(this.getTid()));
 			else
-				id = UploadService.uploadDirectory(this.getFileName(), this.getTid());
+				id = UploadService.uploadDirectory(this.getFileName(), Integer.toString(this.getTid()));
 			this.setFileId(id);
 			//Append du lieu vao file xml
 			XmlFactory fac = new XmlFactory(MyDropboxSwing.dom);
 			fac.insertFileNode(this);
-			String log = "File "+this.getFileName()+" synced on server \n";
+			String log = "\n File "+this.getFileName()+" synced on server";
 			MyDropboxSwing.jTextArea1.append(log);
-			MyDropboxSwing.countFileUpload++;
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -1,19 +1,14 @@
 package service;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.management.timer.TimerNotification;
-
-import controller.AppConfig;
-import actionListener.SyncAction;
-import actionListener.CommitAction;
 import model.Constants;
-import model.FileCursor;
 import mydropbox.MyDropboxSwing;
+import actionListener.CommitAction;
+import actionListener.SyncAction;
 
 public class AutoSyncService implements Runnable{
 
+   public static SyncAction syncAction = new SyncAction();
+   public static CommitAction upload = new CommitAction();
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -22,13 +17,15 @@ public class AutoSyncService implements Runnable{
 		{
 			System.out.println("Thuc hien kiem tra");			
 			
-			SyncAction syncAction = new SyncAction();
+			
 			syncAction.sync();
 			
-			if(MyDropboxSwing.lstCommit.size()>0)
+			//Xin khoa lock
+			boolean result = UploadService.getPermission();
+			if(MyDropboxSwing.lstCommit.size()>0&&result)
 			{
 				System.out.println("Thuc hien upload");
-				CommitAction upload = new CommitAction();
+				
 				upload.actionPerformed(null);
 			}
 			//So sanh cac file trong muc sync voi file commit, thong bao cac file conflict

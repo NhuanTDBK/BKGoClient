@@ -1,19 +1,38 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public abstract class FileChange implements Runnable{
+public abstract class FileChange implements Runnable, Serializable{
 
+	private static final long serialVersionUID = 8859588020449716982L;
 	private int fileChangeId;
 	private int fileId;
-	private String fileName;
-	private String tid;
+	private int tid;
 	private int type;
 	private String beforeChange;
 	private String afterChange;
 	private Date timestamp;
 	private int isFile;
+	private String fileName;
+	private int userId;
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	private String ipAddress;
 	
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
 	public String getFileName() {
 		return fileName;
 	}
@@ -46,11 +65,11 @@ public abstract class FileChange implements Runnable{
 		this.fileChangeId = fileChangeId;
 	}
 
-	public String getTid() {
+	public int getTid() {
 		return tid;
 	}
 
-	public void setTid(String tid) {
+	public void setTid(int tid) {
 		this.tid = tid;
 	}
 
@@ -92,4 +111,5 @@ public abstract class FileChange implements Runnable{
 
 	public abstract void doAction();
 	public abstract void doUpdate();
+
 }

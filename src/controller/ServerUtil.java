@@ -2,6 +2,8 @@ package controller;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -39,8 +41,10 @@ public class ServerUtil {
 	 }
 	public static String convertPath(String fileFullPath, String fileParent)
 	{
-		String convert=fileFullPath.replaceAll(fileParent+"/", "");
-		return convert;
+		Path fullPath = Paths.get(fileFullPath);
+		Path fileP = Paths.get(fileParent);
+		Path convert1 = fileP.relativize(fullPath);
+		return convert1.toString();
 	}
 	public static ArrayList<String>getToken(String element)
 	{

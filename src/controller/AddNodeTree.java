@@ -6,8 +6,8 @@
 package controller;
 
 import java.io.File;
+
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -16,18 +16,14 @@ import javax.swing.tree.DefaultTreeModel;
 public class AddNodeTree {
     //DefaultTreeModel model = (DefaultTreeModel) mydropbox.MyDropboxSwing.jTree1.getModel();
     public static void addNode(File root_file, DefaultMutableTreeNode root){
-        if(!root_file.isDirectory()){
-            DefaultMutableTreeNode child = new DefaultMutableTreeNode(root_file.getName());
-            root.add(child);
-        }else{
             File[] arr = root_file.listFiles();
             for(int i = 0; i < root_file.listFiles().length; i++){               
                 File child_file = arr[i];
-                System.out.println(child_file.getName());
+//                System.out.println(child_file.getName());
                 DefaultMutableTreeNode child = new DefaultMutableTreeNode(child_file.getName());
                 root.add(child);
-                addNode(child_file, child);
+//                addNode(child_file, child);
             }
-        }
+        
     }
 }

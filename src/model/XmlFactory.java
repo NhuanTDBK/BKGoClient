@@ -170,10 +170,11 @@ public class XmlFactory {
 		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		NodeList nodes = doc.getElementsByTagName("Change");
 		List<FileChange> lst= new ArrayList<FileChange>();
+		FileChange fileChange = null;
 		for(int i = 0;i<nodes.getLength();i++)
 		{
 			Node node = nodes.item(i);
-			FileChange fileChange = null;
+		
 			NamedNodeMap attrs=node.getAttributes();
 			String idStr = attrs.getNamedItem("id").getNodeValue();
 			int fileId = Integer.parseInt(idStr);
@@ -204,7 +205,7 @@ public class XmlFactory {
 			{
 				fileChange = new FileDelete(nameStr,isFile);
 			}
-			fileChange.setTid(tidStr);
+			fileChange.setTid(Integer.parseInt(tidStr));
 			fileChange.setFileId(fileId);
 			fileChange.setTimestamp(timestamp);
 			fileChange.setFileChangeId(Integer.parseInt(fileChangeIdStr));

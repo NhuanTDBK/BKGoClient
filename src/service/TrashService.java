@@ -5,14 +5,11 @@
  */
 package service;
 
-import model.FileCursor;
 import mydropbox.MyDropboxSwing;
 import org.restlet.data.MediaType;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
-import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.ClientResource;
-import org.w3c.dom.Document;
 
 /**
  *
@@ -25,8 +22,6 @@ public class TrashService {
         Representation response = null;
         try {
             dom = new DomRepresentation();
-            Document doc;
-            doc = dom.getDocument();
             String url = MyDropboxSwing.protocol + "://" + MyDropboxSwing.address + ":" + MyDropboxSwing.port + "/user/" + MyDropboxSwing.userId + "/trash";
             //String url = "http://localhost:8112/user/1/trash";
             ClientResource client = new ClientResource(url);
@@ -34,9 +29,10 @@ public class TrashService {
             if (response.getMediaType().equals(MediaType.TEXT_XML) || response.getMediaType().equals(MediaType.APPLICATION_ALL_XML)) {
                 dom = new DomRepresentation(response);
             } else {
+            	client.release();
                 return null;
             }
-
+            client.release();
         } catch (Exception e) {
             // TODO Auto-generated catch block
             System.out.println("Loi server " + e.getMessage());

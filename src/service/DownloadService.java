@@ -37,6 +37,10 @@ import org.xml.sax.SAXException;
 
 public class DownloadService {
 
+	public static CloseableHttpClient getHttpClient()
+	{
+		return HttpConnectionPool.getClient();
+	}
 	public void getAll() throws IllegalStateException, IOException {
 		// TODO Auto-generated method stub
 		String URL = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/files/all";
@@ -106,6 +110,7 @@ public class DownloadService {
 		CloseableHttpResponse response = null;
 		try {
 			response = client.execute(httpGet);
+			
 		} catch (ClientProtocolException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -133,6 +138,8 @@ public class DownloadService {
 				IOUtils.copy(stream, out);
 				out.close();
 				doc = builder.parse(new FileInputStream("_tmp.xml"));
+				client.close();
+				response.close();
 			} catch (SAXException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -147,6 +154,7 @@ public class DownloadService {
 				e.printStackTrace();
 			}
 		}
+	
 		return doc;
 	}
 	/*
@@ -155,13 +163,15 @@ public class DownloadService {
 	public void downloadFile(String fileId, String name) {
 		// TODO Auto-generated method stub
 		String URL = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/file/"+fileId;
-		CloseableHttpClient client = HttpClients.createDefault();
+		CloseableHttpClient client = getHttpClient();
+		//String URL = "http://localhost:8112/user/1/file/"+fileId;
 		HttpGet httpGet = new HttpGet(URL);
 		CloseableHttpResponse response;
 		final Long largeSize = 2L*FileUtils.ONE_GB;
 		try {
 			response = client.execute(httpGet);
 			HttpEntity entity = response.getEntity();
+			
 			int status = response.getStatusLine().getStatusCode();
 			if(status==200)
 			{
@@ -179,11 +189,14 @@ public class DownloadService {
 				Date end = new Date();
 				System.out.println("Ended: "+end.getTime());
 				out.close();
+				httpGet.releaseConnection();
+				response.close();
 			}
 			else 
 			{
 				System.out.println("File khong ton tai");
 			}
+			//client.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -193,7 +206,7 @@ public class DownloadService {
 	public static void main(String [] args)
 	{
 		DownloadService download = new DownloadService();
-		download.downloadFile("95", "diff2");
+		download.downloadFile("117", "diff2");
 	}
 
 }

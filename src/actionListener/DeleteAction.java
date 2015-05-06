@@ -7,15 +7,7 @@ package actionListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-
-import model.CustomTableModel;
-import model.XmlFactory;
-
-import org.restlet.ext.xml.DomRepresentation;
-
 import frame.ShowFileDelete;
-import service.TrashService;
 
 /**
  *

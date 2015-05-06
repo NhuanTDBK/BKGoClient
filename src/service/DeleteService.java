@@ -6,7 +6,6 @@ import mydropbox.MyDropboxSwing;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -16,13 +15,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class DeleteService {
+	public static CloseableHttpClient getHttpClient()
+	{
+		return HttpConnectionPool.getClient();
+	}
 	public static void deleteFileById(int fileId)
 	{
 		String URL = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/file/"+fileId;
 		HttpDelete deleteHTTP = new HttpDelete(URL);
-		CloseableHttpClient client = HttpClients.createDefault();
+		CloseableHttpClient client = getHttpClient();
 		try {
 			CloseableHttpResponse response = client.execute(deleteHTTP);
+			response.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -80,6 +84,7 @@ public class DeleteService {
 			String resStr = EntityUtils.toString(response.getEntity());
 			MyDropboxSwing.cursor.setIndex(Integer.parseInt(resStr));
 			System.out.println("Delete thanh cong");
+			client.close();
 		}
 		catch(Exception ex)
 		{

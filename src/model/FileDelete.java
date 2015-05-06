@@ -29,12 +29,10 @@ public class FileDelete extends FileCreate implements Runnable{
 		// TODO Auto-generated method stub
 		XmlFactory factory = new XmlFactory(MyDropboxSwing.dom);
 		int fileId = factory.getFileIdByFileName(this.getFileName());
-		System.out.println(fileId);
 		this.setFileId(fileId);
-		DeleteService.deleteFileByFileName(this.getFileId(), this.getTid());
+		DeleteService.deleteFileByFileName(this.getFileId(), Integer.toString(this.getTid()));
 		// Xoa the file trong index xml
 		factory.deleteNodeByFileName(this.getFileName());
-		MyDropboxSwing.countFileDelete++;
 	}
 
 	@Override

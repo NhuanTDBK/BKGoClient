@@ -21,7 +21,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.resource.ClientResource;
@@ -29,7 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class UploadService {
-	
+
 	private static CloseableHttpClient getHttpClient()
 	{
 		return HttpConnectionPool.getClient();
@@ -50,7 +49,7 @@ public class UploadService {
 			HttpEntity entity = builder.build();
 			httpPost.setEntity(entity);
 			httpPost.addHeader("X-TID",tid);
-	
+
 			CloseableHttpResponse response = client.execute(httpPost);
 			HttpEntity res = response.getEntity();
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -58,14 +57,15 @@ public class UploadService {
 			Document doc = docBuilder.parse(res.getContent());
 			DomRepresentation dom = new DomRepresentation();
 			dom.setDocument(doc);
-			
+
 			fileId = Integer.parseInt(dom.getText("/File/FileId"));
 			fileChangeId = Integer.parseInt(dom.getText("/File/FileChangeId"));
-			
+
 			MyDropboxSwing.cursor.setTid(Integer.parseInt(tid));
 			MyDropboxSwing.cursor.setIndex(fileChangeId);
 
-			//client.close();
+			httpPost.releaseConnection();
+			response.close();
 		}
 		catch(Exception ex)
 		{
@@ -79,7 +79,7 @@ public class UploadService {
 
 		String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/files/directory";
 		//String url = "http://localhost:8112/user/1/files/directory";
-		CloseableHttpClient client = HttpClients.createDefault();
+		CloseableHttpClient client = getHttpClient();
 		HttpPost httpPost = new HttpPost(url);
 		StringEntity stringEntity = new StringEntity(directoryName);
 		httpPost.setEntity(stringEntity);
@@ -87,6 +87,8 @@ public class UploadService {
 		CloseableHttpResponse response = client.execute(httpPost);
 		try{
 			String fileId = EntityUtils.toString(response.getEntity());
+			httpPost.releaseConnection();
+			response.close();
 			return Integer.parseInt(fileId);
 		}catch(Exception ex)
 		{
@@ -133,6 +135,7 @@ public class UploadService {
 			httpPatch.setEntity(new StringEntity(xml.toString(),ContentType.TEXT_XML));
 			ClientResource cr = new ClientResource(url);
 			cr.patch(xml);
+
 			//CloseableHttpResponse response = client.execute(httpPatch);
 
 		} catch (IOException e) {
@@ -141,15 +144,22 @@ public class UploadService {
 		}
 		return 1;
 	}
-	public static void main(String [] args)
+	public static boolean getPermission()
 	{
-		UploadService upload = new UploadService();
-		//upload.uploadFile("1926896_1482959935303343_7941230303166801896_n.jpg","2");
-		try {
-			upload.uploadDirectory("as", "2");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		boolean result = true;
+		//String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/lock";
+
+		return result;
 	}
+	//	public static void main(String [] args)
+	//	{
+	//		UploadService upload = new UploadService();
+	//		//upload.uploadFile("1926896_1482959935303343_7941230303166801896_n.jpg","2");
+	//		try {
+	//			upload.uploadDirectory("as", "2");
+	//		} catch (IOException e) {
+	//			// TODO Auto-generated catch block
+	//			e.printStackTrace();
+	//		}
+	//	}
 }

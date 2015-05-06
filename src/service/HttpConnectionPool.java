@@ -17,7 +17,7 @@ public class HttpConnectionPool {
 			PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 			cm.setMaxTotal(200);
 			httpClient = HttpClients.custom().setConnectionManager(cm).build();
-			monitor = new IdleConnectionEvictor(cm, 20000,TimeUnit.MILLISECONDS);
+			monitor = new IdleConnectionEvictor(cm, 125,TimeUnit.MILLISECONDS);
 			monitor.start();
 		}
 		catch(Exception ex)

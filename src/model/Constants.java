@@ -16,5 +16,6 @@ public class Constants {
 	public static int TIME_UPDATE = 10000;
 	public static final String SYNC_KEY = "sync";
 	public static final String SYNC_VALUE = "true";
+	public static final long TIME_MONITOR = 5000;//Milisecond
 
 }
