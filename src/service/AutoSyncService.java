@@ -15,24 +15,19 @@ public class AutoSyncService implements Runnable{
 		//Lay tid hien tai
 		while(true)
 		{
-			System.out.println("Thuc hien kiem tra");			
-			
 			
 			syncAction.sync();
 			
-			//Xin khoa lock
-			boolean result = UploadService.getPermission();
-			if(MyDropboxSwing.lstCommit.size()>0&&result)
+			if(!MyDropboxSwing.lstCommit.isEmpty())
 			{
 				System.out.println("Thuc hien upload");
-				
 				upload.actionPerformed(null);
 			}
 			//So sanh cac file trong muc sync voi file commit, thong bao cac file conflict
 			//Thuc hien upload
 			//Ghi tid
 			//Lap lai trong 3s
-			System.out.println("Ket thuc kiem tra");
+			//System.out.println("Ket thuc kiem tra");
 			try {
 				Thread.sleep(Constants.TIME_UPDATE);
 			} catch (InterruptedException e) {

@@ -16,37 +16,25 @@ public class CommitAction implements ActionListener {
 		int tid = TransactionService.getTransaction()+1;
 		//Luu tid vao file property
 		System.out.println("Transaction: "+tid);
-		//		while(!MyDropboxSwing.lstCommit.isEmpty())
-//		{
-//			FileChange fileChange = MyDropboxSwing.lstCommit.poll();
-//			fileChange.setTid(tid);
-//			System.out.println(fileChange.toString());
-//			fileChange.doAction();
-//		}
+		MyDropboxSwing.jProgressBar1.setIndeterminate(true);
 		while(!MyDropboxSwing.lstCommit.isEmpty())
 		{
 			FileChange fileChange  = MyDropboxSwing.lstCommit.poll();
 			if(fileChange!=null)
 			{
 				fileChange.setTid(tid);
-//				System.out.println(fileChange.toString());
 				fileChange.doAction();
-//				Thread fileUpload = new Thread(new Runnable() {
-//					
-//					@Override
-//					public void run() {
-//						// TODO Auto-generated method stub
-//						fileChange.doAction();
-//					}
-//				});
-//				fileUpload.start();
 			}
 		}
-		AppConfig property = MyDropboxSwing.config;
-		property.write("tid", Integer.toString(MyDropboxSwing.cursor.getTid()));
-		property.write("index", Integer.toString(MyDropboxSwing.cursor.getIndex()));
-		MyDropboxSwing.jTextArea1.append("\n Sync completed");
-		System.gc();
+		MyDropboxSwing.config.write("tid", Integer.toString(MyDropboxSwing.cursor.getTid()));
+		MyDropboxSwing.config.write("index", Integer.toString(MyDropboxSwing.cursor.getIndex()));
+		MyDropboxSwing.jTextArea1.append("\n Upload completed");
+		MyDropboxSwing.jProgressBar1.setIndeterminate(false	);
+		//System.gc();
+	}
+	public void commit()
+	{
+		this.actionPerformed(null);
 	}
 
 }

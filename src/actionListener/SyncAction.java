@@ -23,13 +23,12 @@ public class SyncAction implements ActionListener {
     }
 
     public void sync() {
-       
-		//parse thanh list cac doi tuong file change
+
+        //parse thanh list cac doi tuong file change
         //Kiem tra file do co thuoc danh muc commit hay khong?
         //Neu co, bao conflict
         //thuc hien doUpdate
         //Update xong, khoi dong lai watcher
-//		TransactionService transactionHTTP = new TransactionService();
         MyDropboxSwing.jProgressBar1.setIndeterminate(true);
         DomRepresentation dom = transactionHTTP.getLatestUpdate(MyDropboxSwing.cursor);
         if (dom != null) {
@@ -40,26 +39,24 @@ public class SyncAction implements ActionListener {
                 doc = dom.getDocument();
                 lst = factory.parseXML(doc);
                 try {
-                	MyDropboxSwing.jTextArea1.setText("");
-                    String log = "Thuc hien sync \n";
-                    MyDropboxSwing.jTextArea1.append(log);
+
                     MyDropboxSwing.watcher.stop();
                 } catch (Exception e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
                 }
+                MyDropboxSwing.jTextArea1.setText("");
+                String log = "Thuc hien sync \n";
+                MyDropboxSwing.jTextArea1.append(log);
                 for (FileChange fileChange : lst) {
                     fileChange.doUpdate();
                     MyDropboxSwing.cursor.setTid(fileChange.getTid());
                     MyDropboxSwing.cursor.setIndex(fileChange.getFileChangeId());
                 }
             } catch (IOException e2) {
-                // TODO Auto-generated catch block
-                e2.printStackTrace();
                 System.out.println("Last version!!!!");
             }
             MyDropboxSwing.config.write("tid", Integer.toString(MyDropboxSwing.cursor.getTid()));
             MyDropboxSwing.config.write("index", Integer.toString(MyDropboxSwing.cursor.getIndex()));
+            MyDropboxSwing.jTextArea1.append("\n Sync completed");
             try {
                 MyDropboxSwing.watcher.start();
             } catch (Exception e1) {
@@ -68,7 +65,6 @@ public class SyncAction implements ActionListener {
             }
         }
         MyDropboxSwing.jProgressBar1.setIndeterminate(false);
-        MyDropboxSwing.jTextArea1.append("\n Sync completed");
         System.gc();
     }
 }

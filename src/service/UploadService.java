@@ -29,137 +29,121 @@ import org.w3c.dom.Node;
 
 public class UploadService {
 
-	private static CloseableHttpClient getHttpClient()
-	{
-		return HttpConnectionPool.getClient();
-	}
-	public static int uploadFile(String fileName, String tid)
-	{
-		String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/files/file";
-		//String url = "http://localhost:8112/user/1/files/file";
-		File file = new File(MyDropboxSwing.urls+"/"+fileName);
-		//CloseableHttpClient client = HttpClients.createDefault();
-		CloseableHttpClient client = getHttpClient();
-		HttpPost httpPost = new HttpPost(url);
-		int fileId = 0;
-		int fileChangeId=0;
-		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-		try{
-			builder.addBinaryBody("file",file,ContentType.create(Files.probeContentType(Paths.get(file.getPath()))),fileName);
-			HttpEntity entity = builder.build();
-			httpPost.setEntity(entity);
-			httpPost.addHeader("X-TID",tid);
+    private static CloseableHttpClient getHttpClient() {
+        return HttpConnectionPool.getClient();
+    }
 
-			CloseableHttpResponse response = client.execute(httpPost);
-			HttpEntity res = response.getEntity();
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = factory.newDocumentBuilder();
-			Document doc = docBuilder.parse(res.getContent());
-			DomRepresentation dom = new DomRepresentation();
-			dom.setDocument(doc);
+    public static int uploadFile(String fileName, String tid) {
+        String url = MyDropboxSwing.protocol + "://" + MyDropboxSwing.address + ":" + MyDropboxSwing.port + "/user/" + MyDropboxSwing.userId + "/files/file";
+        //String url = "http://localhost:8112/user/1/files/file";
+        File file = new File(MyDropboxSwing.urls + "/" + fileName);
+        //CloseableHttpClient client = HttpClients.createDefault();
+        CloseableHttpClient client = getHttpClient();
+        HttpPost httpPost = new HttpPost(url);
+        int fileId = 0;
+        int fileChangeId = 0;
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        try {
+            builder.addBinaryBody("file", file, ContentType.create(Files.probeContentType(Paths.get(file.getPath()))), fileName);
+            HttpEntity entity = builder.build();
+            httpPost.setEntity(entity);
+            httpPost.addHeader("X-TID", tid);
+            
+            CloseableHttpResponse response = client.execute(httpPost);
+            HttpEntity res = response.getEntity();
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = factory.newDocumentBuilder();
+            Document doc = docBuilder.parse(res.getContent());
+            DomRepresentation dom = new DomRepresentation();
+            dom.setDocument(doc);
 
-			fileId = Integer.parseInt(dom.getText("/File/FileId"));
-			fileChangeId = Integer.parseInt(dom.getText("/File/FileChangeId"));
+            fileId = Integer.parseInt(dom.getText("/File/FileId"));
+            fileChangeId = Integer.parseInt(dom.getText("/File/FileChangeId"));
 
-			MyDropboxSwing.cursor.setTid(Integer.parseInt(tid));
-			MyDropboxSwing.cursor.setIndex(fileChangeId);
+            MyDropboxSwing.cursor.setTid(Integer.parseInt(tid));
+            MyDropboxSwing.cursor.setIndex(fileChangeId);
 
-			httpPost.releaseConnection();
-			response.close();
-		}
-		catch(Exception ex)
-		{
-			ex.printStackTrace();
-			return 0;
-		}
-		return fileId;
-	}
-	public static int uploadDirectory(String directoryName,String tid) throws ClientProtocolException, IOException
-	{
+            httpPost.releaseConnection();
+            response.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return 0;
+        }
+        return fileId;
+    }
 
-		String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/files/directory";
-		//String url = "http://localhost:8112/user/1/files/directory";
-		CloseableHttpClient client = getHttpClient();
-		HttpPost httpPost = new HttpPost(url);
-		StringEntity stringEntity = new StringEntity(directoryName);
-		httpPost.setEntity(stringEntity);
-		httpPost.addHeader("X-TID",tid);
-		CloseableHttpResponse response = client.execute(httpPost);
-		try{
-			String fileId = EntityUtils.toString(response.getEntity());
-			httpPost.releaseConnection();
-			response.close();
-			return Integer.parseInt(fileId);
-		}catch(Exception ex)
-		{
-			return 0;
-		}
-	}
-	public static int patchFile(int type,String tid, String oldName,String newName,Date timestamp)
-	{
-		XmlFactory fac = new XmlFactory();
-		int fileId = fac.getFileIdByFileName(oldName);
-		String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/file/"+fileId;
-		HttpPatch httpPatch = new HttpPatch(url);
-		DomRepresentation xml;
-		try {
-			xml = new DomRepresentation();
-			xml.setIndenting(true);
-			Document doc = xml.getDocument();
+    public static int uploadDirectory(String directoryName, String tid) throws ClientProtocolException, IOException {
 
-			Node userNode = doc.createElement("File");
-			doc.appendChild(userNode);
+        String url = MyDropboxSwing.protocol + "://" + MyDropboxSwing.address + ":" + MyDropboxSwing.port + "/user/" + MyDropboxSwing.userId + "/files/directory";
+        //String url = "http://localhost:8112/user/1/files/directory";
+        CloseableHttpClient client = getHttpClient();
+        HttpPost httpPost = new HttpPost(url);
+        StringEntity stringEntity = new StringEntity(directoryName);
+        httpPost.setEntity(stringEntity);
+        httpPost.addHeader("X-TID", tid);
+        CloseableHttpResponse response = client.execute(httpPost);
+        try {
+            String fileId = EntityUtils.toString(response.getEntity());
+            httpPost.releaseConnection();
+            response.close();
+//            MyDropboxSwing.cursor.setTid(Integer.parseInt(tid));
+////            MyDropboxSwing.cursor.setIndex(fileChangeId);
+            return Integer.parseInt(fileId);
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
 
-			Node oldNameNode = doc.createElement("OldName");
-			oldNameNode.setTextContent(oldName);
-			userNode.appendChild(oldNameNode);
+    public static int patchFile(int type, String tid, String oldName, String newName, Date timestamp) {
+        XmlFactory fac = new XmlFactory();
+        int fileId = fac.getFileIdByFileName(oldName);
+        String url = MyDropboxSwing.protocol + "://" + MyDropboxSwing.address + ":" + MyDropboxSwing.port + "/user/" + MyDropboxSwing.userId + "/file/" + fileId;
+        HttpPatch httpPatch = new HttpPatch(url);
+        DomRepresentation xml;
+        try {
+            xml = new DomRepresentation();
+            xml.setIndenting(true);
+            Document doc = xml.getDocument();
 
+            Node userNode = doc.createElement("File");
+            doc.appendChild(userNode);
 
-			Node newNameNode = doc.createElement("NewName");
-			newNameNode.setTextContent(newName);
-			userNode.appendChild(newNameNode);
+            Node oldNameNode = doc.createElement("OldName");
+            oldNameNode.setTextContent(oldName);
+            userNode.appendChild(oldNameNode);
 
-			Node actionNode = doc.createElement("Type");
-			actionNode.setTextContent(Integer.toString(type));
-			userNode.appendChild(actionNode);
+            Node newNameNode = doc.createElement("NewName");
+            newNameNode.setTextContent(newName);
+            userNode.appendChild(newNameNode);
 
-			Node tidNode = doc.createElement("TID");
-			tidNode.setTextContent(tid);
-			userNode.appendChild(tidNode);
+            Node actionNode = doc.createElement("Type");
+            actionNode.setTextContent(Integer.toString(type));
+            userNode.appendChild(actionNode);
 
+            Node tidNode = doc.createElement("TID");
+            tidNode.setTextContent(tid);
+            userNode.appendChild(tidNode);
 
-			Node timestampNode = doc.createElement("NewName");
-			timestampNode.setTextContent(timestamp.toString());
-			userNode.appendChild(timestampNode);
+            Node timestampNode = doc.createElement("NewName");
+            timestampNode.setTextContent(timestamp.toString());
+            userNode.appendChild(timestampNode);
 
-			httpPatch.setEntity(new StringEntity(xml.toString(),ContentType.TEXT_XML));
-			ClientResource cr = new ClientResource(url);
-			cr.patch(xml);
+            httpPatch.setEntity(new StringEntity(xml.toString(), ContentType.TEXT_XML));
+            ClientResource cr = new ClientResource(url);
+            cr.patch(xml);
 
 			//CloseableHttpResponse response = client.execute(httpPatch);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return 1;
+    }
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 1;
-	}
-	public static boolean getPermission()
-	{
-		boolean result = true;
-		//String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/lock";
+    public static boolean getPermission() {
+        boolean result = true;
+        //String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/lock";
 
-		return result;
-	}
-	//	public static void main(String [] args)
-	//	{
-	//		UploadService upload = new UploadService();
-	//		//upload.uploadFile("1926896_1482959935303343_7941230303166801896_n.jpg","2");
-	//		try {
-	//			upload.uploadDirectory("as", "2");
-	//		} catch (IOException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		}
-	//	}
+        return result;
+    }
 }

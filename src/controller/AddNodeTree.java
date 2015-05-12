@@ -15,7 +15,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 public class AddNodeTree {
     //DefaultTreeModel model = (DefaultTreeModel) mydropbox.MyDropboxSwing.jTree1.getModel();
-    public static void addNode(File root_file, DefaultMutableTreeNode root){
+    public void addNode(File root_file, DefaultMutableTreeNode root){
             File[] arr = root_file.listFiles();
             for(int i = 0; i < root_file.listFiles().length; i++){               
                 File child_file = arr[i];
