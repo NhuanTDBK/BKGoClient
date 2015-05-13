@@ -11,11 +11,11 @@ import mydropbox.MyDropboxSwing;
 import org.restlet.ext.xml.DomRepresentation;
 import org.w3c.dom.Document;
 
-import service.TransactionService;
+import service.SyncService;
 
 public class SyncAction implements ActionListener {
 
-    private static final TransactionService transactionHTTP = new TransactionService();
+    private static final SyncService transactionHTTP = new SyncService();
 
     @Override
     public void actionPerformed(ActionEvent e) {

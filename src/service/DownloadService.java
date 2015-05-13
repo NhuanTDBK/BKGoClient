@@ -100,8 +100,8 @@ public class DownloadService {
      */
 
     public void downloadFile(String fileId, String name) {
-        // TODO Auto-generated method stub
-        String URL = MyDropboxSwing.protocol + "://" + MyDropboxSwing.address + ":" + MyDropboxSwing.port + "/user/" + MyDropboxSwing.userId + "/file/" + fileId;
+       
+    	String URL = MyDropboxSwing.protocol + "://" + MyDropboxSwing.address + ":" + MyDropboxSwing.port + "/user/" + MyDropboxSwing.userId + "/file/" + fileId;
         CloseableHttpClient client = getHttpClient();
         //String URL = "http://localhost:8112/user/1/file/"+fileId;
         HttpGet httpGet = new HttpGet(URL);

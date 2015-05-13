@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import model.FileChange;
 import mydropbox.MyDropboxSwing;
-import service.TransactionService;
+import service.SyncService;
 import controller.AppConfig;
 
 public class CommitAction implements ActionListener {
@@ -13,7 +13,7 @@ public class CommitAction implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		//Lay tid gan nhat
-		int tid = TransactionService.getTransaction()+1;
+		int tid = SyncService.getTransaction()+1;
 		//Luu tid vao file property
 		System.out.println("Transaction: "+tid);
 		MyDropboxSwing.jProgressBar1.setIndeterminate(true);

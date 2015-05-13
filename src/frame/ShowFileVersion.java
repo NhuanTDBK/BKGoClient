@@ -43,7 +43,7 @@ public class ShowFileVersion extends javax.swing.JFrame {
         DomRepresentation dom = trashService.getVersions();
         XmlFactory factory = new XmlFactory();
         Object[][] lst = null;
-        String[] columnName = {"File Name", "Date", "Link Download"};
+        String[] columnName = {"File Name", "Date", "Version","Link Download"};
         if (dom != null) {
             try {
                 lst = factory.parseXMLToVersion(dom.getDocument());

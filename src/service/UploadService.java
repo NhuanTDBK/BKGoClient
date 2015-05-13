@@ -35,9 +35,9 @@ public class UploadService {
 
     public static int uploadFile(String fileName, String tid) {
         String url = MyDropboxSwing.protocol + "://" + MyDropboxSwing.address + ":" + MyDropboxSwing.port + "/user/" + MyDropboxSwing.userId + "/files/file";
-        //String url = "http://localhost:8112/user/1/files/file";
+        
         File file = new File(MyDropboxSwing.urls + "/" + fileName);
-        //CloseableHttpClient client = HttpClients.createDefault();
+        
         CloseableHttpClient client = getHttpClient();
         HttpPost httpPost = new HttpPost(url);
         int fileId = 0;
@@ -48,7 +48,7 @@ public class UploadService {
             HttpEntity entity = builder.build();
             httpPost.setEntity(entity);
             httpPost.addHeader("X-TID", tid);
-            
+            //Thuc hien upload
             CloseableHttpResponse response = client.execute(httpPost);
             HttpEntity res = response.getEntity();
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -86,64 +86,9 @@ public class UploadService {
             String fileId = EntityUtils.toString(response.getEntity());
             httpPost.releaseConnection();
             response.close();
-//            MyDropboxSwing.cursor.setTid(Integer.parseInt(tid));
-////            MyDropboxSwing.cursor.setIndex(fileChangeId);
             return Integer.parseInt(fileId);
         } catch (Exception ex) {
             return 0;
         }
-    }
-
-    public static int patchFile(int type, String tid, String oldName, String newName, Date timestamp) {
-        XmlFactory fac = new XmlFactory();
-        int fileId = fac.getFileIdByFileName(oldName);
-        String url = MyDropboxSwing.protocol + "://" + MyDropboxSwing.address + ":" + MyDropboxSwing.port + "/user/" + MyDropboxSwing.userId + "/file/" + fileId;
-        HttpPatch httpPatch = new HttpPatch(url);
-        DomRepresentation xml;
-        try {
-            xml = new DomRepresentation();
-            xml.setIndenting(true);
-            Document doc = xml.getDocument();
-
-            Node userNode = doc.createElement("File");
-            doc.appendChild(userNode);
-
-            Node oldNameNode = doc.createElement("OldName");
-            oldNameNode.setTextContent(oldName);
-            userNode.appendChild(oldNameNode);
-
-            Node newNameNode = doc.createElement("NewName");
-            newNameNode.setTextContent(newName);
-            userNode.appendChild(newNameNode);
-
-            Node actionNode = doc.createElement("Type");
-            actionNode.setTextContent(Integer.toString(type));
-            userNode.appendChild(actionNode);
-
-            Node tidNode = doc.createElement("TID");
-            tidNode.setTextContent(tid);
-            userNode.appendChild(tidNode);
-
-            Node timestampNode = doc.createElement("NewName");
-            timestampNode.setTextContent(timestamp.toString());
-            userNode.appendChild(timestampNode);
-
-            httpPatch.setEntity(new StringEntity(xml.toString(), ContentType.TEXT_XML));
-            ClientResource cr = new ClientResource(url);
-            cr.patch(xml);
-
-			//CloseableHttpResponse response = client.execute(httpPatch);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return 1;
-    }
-
-    public static boolean getPermission() {
-        boolean result = true;
-        //String url = MyDropboxSwing.protocol+"://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/lock";
-
-        return result;
     }
 }

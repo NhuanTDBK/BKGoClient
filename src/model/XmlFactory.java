@@ -243,7 +243,7 @@ public class XmlFactory {
 			fileStorage.setFileName(nameStr);
 			objects[i][0] = nameStr;
 			objects[i][1] = timestampStr;
-			objects[i][2] = fileId;
+			objects[i][2] = "http://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/file/"+fileId;
 			lst.add(fileStorage);
 		}
 		return objects;
@@ -259,7 +259,7 @@ public class XmlFactory {
 			Node node = nodes.item(i);
 			NamedNodeMap attrs=node.getAttributes();
 			String idStr = attrs.getNamedItem("id").getNodeValue();
-			int fileId = Integer.parseInt(idStr);
+			//int fileId = Integer.parseInt(idStr);
 
 			String nameStr = attrs.getNamedItem("name").getNodeValue();
 
@@ -269,7 +269,7 @@ public class XmlFactory {
 
 			objects[i][0] = nameStr;
 			objects[i][1] = timestampStr;
-			objects[i][3] = fileId;
+			objects[i][3] = "http://"+MyDropboxSwing.address+":"+MyDropboxSwing.port+"/user/"+MyDropboxSwing.userId+"/file/"+idStr;
 			objects[i][2] = versionStr;
 		}
 		return objects;
